@@ -53,6 +53,24 @@ function logNotification(notification: Notification) {
   console.log()
 }
 
+async function unsubscribeFrom(notification: Notification) {
+  const id = notification.id
+  await client.activity.markNotificationThreadAsRead({
+    id: id,
+    thread_id: id,
+  })
+  await client.activity.deleteNotificationThreadSubscription({
+    id: id,
+    thread_id: id,
+  })
+
+  console.log(
+    ` - unsubscribed from notification ${notification.id} from repo ${
+      notification.repository.full_name
+    }`
+  )
+}
+
 function matchEntry(
   notification: Notification,
   alias: string
@@ -125,10 +143,14 @@ async function getAllNotifications() {
 
         if (pageInt != NaN && pageInt > MAXIMUM_PAGES_FOR_NOW) {
           console.warn(
-            `You have ${pageInt} pages of notifications but this script will be limited to the first ${MAXIMUM_PAGES_FOR_NOW} pages`
+            `Note: You have ${pageInt} pages of notifications but this script will be limited to the first ${MAXIMUM_PAGES_FOR_NOW} pages. This might take a while to crunch the data.`
           )
         } else {
-          console.warn(`You have ${page.value} pages of notifications`)
+          console.warn(
+            `Note: You have ${
+              page.value
+            } pages of notifications. This might take a while to crunch the data.`
+          )
         }
         console.log()
       }
@@ -148,23 +170,16 @@ async function getAllNotifications() {
   return data
 }
 
-getAllNotifications().then(async (data: Array<Notification>) => {
-  for (const d of data) {
-    const matchesRule = matches(d)
+getAllNotifications().then(async (notifications: Array<Notification>) => {
+  for (const notification of notifications) {
+    const matchesRule = matches(notification)
 
     if (matchesRule) {
-      logNotification(d)
-    }
-
-    if (matchesRule && unsubscribe) {
-      await client.activity.markNotificationThreadAsRead({
-        id: d.id,
-        thread_id: d.id,
-      })
-      await client.activity.deleteNotificationThreadSubscription({
-        id: d.id,
-        thread_id: d.id,
-      })
+      if (unsubscribe) {
+        await unsubscribeFrom(notification)
+      } else {
+        logNotification(notification)
+      }
     }
   }
 })
