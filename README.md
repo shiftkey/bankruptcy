@@ -12,19 +12,20 @@ $ yarn
 
 ## Usage
 
+This script looks for an environment variable named `GITHUB_ACCESS_TOKEN` which should be a personal access token that has the `notifications` scope set, otherwise it will error.
+
 To preview the current notifications:
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn forget-me [orgs or owner/repo aliases]
+$ yarn forget-me [orgs or owner/repo aliases]
 ```
 
 To unsubscribe from these organizations
 
 ```
-$ GITHUB_ACCESS_TOKEN=[token] yarn forget-me --unsubscribe [orgs or owner/repo aliases]
+$ yarn forget-me --unsubscribe [orgs or owner/repo aliases]
 ```
 
-When configuring the personal access token ensure it has access to the `notifications` scope, otherwise the script will error.
 
 **No guarantees are provided for this tool. Use at your own risk.**
 
