@@ -15,13 +15,15 @@ $ yarn
 To preview the current notifications:
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn forget-me [orgs or owner/repo aliases]
+$ GITHUB_ACCESS_TOKEN=[token]
+yarn forget-me [orgs or owner/repo aliases]
 ```
 
 To unsubscribe from these organizations
 
 ```
-$ GITHUB_ACCESS_TOKEN=[token] yarn forget-me --unsubscribe [orgs or owner/repo aliases]
+$ GITHUB_ACCESS_TOKEN=[token]
+yarn forget-me --unsubscribe [orgs or owner/repo aliases]
 ```
 
 When configuring the personal access token ensure it has access to the `notifications` scope, otherwise the script will error.
@@ -39,7 +41,8 @@ This tool lets you see what notifications you have associated with a given set o
 **Searching for notifications on a specific repository**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn forget-me atom/atom
+$ GITHUB_ACCESS_TOKEN=[token]
+yarn forget-me atom/atom
 yarn run v1.7.0
 $ ts-node script/forget-me.ts atom/atom
 Note: You have 684 pages of notifications but this script will be limited to the first 100 pages. This might take a while to crunch the data.
@@ -53,7 +56,8 @@ Note: You have 684 pages of notifications but this script will be limited to the
 **Searching for notifications on a specific organization**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token]  yarn forget-me atom
+$ GITHUB_ACCESS_TOKEN=[token] 
+yarn forget-me atom
 yarn run v1.7.0
 $ ts-node script/forget-me.ts atom
 Note: You have 684 pages of notifications but this script will be limited to the first 100 pages. This might take a while to crunch the data.
@@ -73,7 +77,8 @@ Note: You have 684 pages of notifications but this script will be limited to the
 **Unsubscribing from notifications on a specific organization**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token]  yarn forget-me atom --unsubscribe
+$ GITHUB_ACCESS_TOKEN=[token] 
+yarn forget-me atom --unsubscribe
 yarn run v1.7.0
 $ ts-node script/forget-me.ts atom --unsubscribe
 Note: Unsubscribing from all notification threads that match the provided organizations
