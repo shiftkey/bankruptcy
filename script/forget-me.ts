@@ -5,6 +5,14 @@ import * as URL from 'url'
 
 const MAXIMUM_PAGES_FOR_NOW = 100
 
+type RateLimit = {
+  readonly rate: {
+    readonly limit: number
+    readonly remaining: number
+    readonly reset: number
+  }
+}
+
 type Notification = {
   readonly id: string
   readonly unread: boolean
@@ -19,6 +27,31 @@ type Notification = {
     readonly owner: {
       readonly login: string
     }
+  }
+}
+
+async function wrapThrottling(
+  client: octokit,
+  action: (client: octokit) => Promise<octokit.AnyResponse>
+): Promise<octokit.AnyResponse> {
+  try {
+    return await action(client)
+  } catch (err) {
+    const response = await client.misc.getRateLimit({})
+    const rateLimit: RateLimit = response.data
+
+    const { remaining, reset } = rateLimit.rate
+
+    if (remaining === 0) {
+      const date = new Date(reset * 1000)
+      console.log(
+        `You are currently rate limited and will be able to use it again ${moment(
+          date
+        ).fromNow()}`
+      )
+      process.exit(1)
+    }
+    throw err
   }
 }
 
@@ -61,14 +94,18 @@ function logNotification(notification: Notification) {
 
 async function unsubscribeFrom(notification: Notification) {
   const id = notification.id
-  await client.activity.markNotificationThreadAsRead({
-    id: id,
-    thread_id: id,
-  })
-  await client.activity.deleteNotificationThreadSubscription({
-    id: id,
-    thread_id: id,
-  })
+  await wrapThrottling(client, c =>
+    c.activity.markNotificationThreadAsRead({
+      id: id,
+      thread_id: id,
+    })
+  )
+  await wrapThrottling(client, c =>
+    c.activity.deleteNotificationThreadSubscription({
+      id: id,
+      thread_id: id,
+    })
+  )
 
   console.log(
     ` - unsubscribed from notification ${notification.id} from repo ${
@@ -130,7 +167,9 @@ client.authenticate({ type: 'token', token })
 
 async function getAllNotifications() {
   let count = 0
-  let response = await client.activity.getNotifications({ per_page: 100 })
+  let response = await wrapThrottling(client, c =>
+    c.activity.getNotifications({ per_page: 100 })
+  )
   count++
   let link = { link: response.headers.link }
 
@@ -165,7 +204,7 @@ async function getAllNotifications() {
 
   let { data } = response
   while (client.hasNextPage(link)) {
-    response = await client.getNextPage(link)
+    response = await wrapThrottling(client, c => c.getNextPage(link))
     count++
     data = data.concat(response.data)
 
