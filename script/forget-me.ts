@@ -1,7 +1,7 @@
 import * as octokit from '@octokit/rest'
 import * as URL from 'url'
 
-const MAXIMUM_PAGES_FOR_NOW = 40
+const MAXIMUM_PAGES_FOR_NOW = 60
 
 type Notification = {
   readonly id: string
