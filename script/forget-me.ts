@@ -1,4 +1,6 @@
 import * as octokit from '@octokit/rest'
+import * as moment from 'moment'
+
 import * as URL from 'url'
 
 const MAXIMUM_PAGES_FOR_NOW = 100
@@ -7,6 +9,7 @@ type Notification = {
   readonly id: string
   readonly unread: boolean
   readonly reason: string
+  readonly updated_at: string
   readonly subject: {
     readonly title: string
   }
@@ -50,6 +53,9 @@ function logNotification(notification: Notification) {
     } with reason: ${notification.reason}`
   )
   console.log(` - subject: '${notification.subject.title}'`)
+  const then = moment(notification.updated_at)
+  console.log(` - time: ${then.fromNow()}`)
+
   console.log()
 }
 
