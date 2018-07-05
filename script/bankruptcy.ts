@@ -165,6 +165,22 @@ if (token == null) {
 const client = new octokit()
 client.authenticate({ type: 'token', token })
 
+client.misc.getRateLimit({}).then(response => {
+  const rateLimit: RateLimit = response.data
+
+  const { remaining, reset } = rateLimit.rate
+
+  if (remaining > 0) {
+    const date = new Date(reset * 1000)
+
+    console.log(
+      `NOTE: You have ${remaining} API requests and this will reset ${moment(
+        date
+      ).fromNow()}`
+    )
+  }
+})
+
 async function getAllNotifications() {
   let count = 0
   let response = await wrapThrottling(client, c =>

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "forget-me": "ts-node script/forget-me.ts"
+    "bankruptcy": "ts-node script/bankruptcy.ts"
   },
   "keywords": [],
   "author": "",

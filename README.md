@@ -1,6 +1,6 @@
-# Leave Me Alone! PoC
+# Notification Bankruptcy!
 
-This is a proof of concept for bulk unsubscribing from a given set of organizations and repositories.
+This is a proof of concept for bulk unsubscribing from a given set of organizations and repositories, because life is too short for some things.
 
 ## Installation
 
@@ -17,15 +17,14 @@ This script looks for an environment variable named `GITHUB_ACCESS_TOKEN` which 
 To preview the current notifications:
 
 ```sh
-$ yarn forget-me [orgs or owner/repo aliases]
+$ yarn bankruptcy [orgs or owner/repo aliases]
 ```
 
 To unsubscribe from these organizations
 
 ```
-$ yarn forget-me --unsubscribe [orgs or owner/repo aliases]
+$ yarn bankruptcy --unsubscribe [orgs or owner/repo aliases]
 ```
-
 
 **No guarantees are provided for this tool. Use at your own risk.**
 
@@ -40,9 +39,9 @@ This tool lets you see what notifications you have associated with a given set o
 **Searching for notifications on a specific repository**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn forget-me atom/atom
+$ GITHUB_ACCESS_TOKEN=[token] yarn bankruptcy atom/atom
 yarn run v1.7.0
-$ ts-node script/forget-me.ts atom/atom
+$ ts-node script/bankruptcy.ts atom/atom
 Note: You have 684 pages of notifications but this script will be limited to the first 100 pages. This might take a while to crunch the data.
 
  - notification 349024187 from repo atom/atom with reason: subscribed
@@ -54,9 +53,9 @@ Note: You have 684 pages of notifications but this script will be limited to the
 **Searching for notifications on a specific organization**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token]  yarn forget-me atom
+$ GITHUB_ACCESS_TOKEN=[token] yarn bankruptcy atom
 yarn run v1.7.0
-$ ts-node script/forget-me.ts atom
+$ ts-node script/bankruptcy.ts atom
 Note: You have 684 pages of notifications but this script will be limited to the first 100 pages. This might take a while to crunch the data.
 
  - notification 352634327 from repo atom/metrics with reason: subscribed
@@ -74,9 +73,9 @@ Note: You have 684 pages of notifications but this script will be limited to the
 **Unsubscribing from notifications on a specific organization**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token]  yarn forget-me atom --unsubscribe
+$ GITHUB_ACCESS_TOKEN=[token] yarn bankruptcy atom --unsubscribe
 yarn run v1.7.0
-$ ts-node script/forget-me.ts atom --unsubscribe
+$ ts-node script/bankruptcy.ts atom --unsubscribe
 Note: Unsubscribing from all notification threads that match the provided organizations
 
 Note: You have 652 pages of notifications but this script will be limited to the first 100 pages
