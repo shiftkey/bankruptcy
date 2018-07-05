@@ -2,6 +2,16 @@
 
 This is a proof of concept for bulk unsubscribing from a given set of organizations and repositories.
 
+## Installation
+
+Currently this is only usable from source, so you'll need to clone this repository and run `yarn` to install the dependencies it requires:
+
+```shellsession
+$ yarn
+```
+
+## Usage
+
 To preview the current notifications:
 
 ```sh
