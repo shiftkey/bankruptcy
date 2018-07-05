@@ -1,7 +1,7 @@
 import * as octokit from '@octokit/rest'
 import * as URL from 'url'
 
-const MAXIMUM_PAGES_FOR_NOW = 60
+const MAXIMUM_PAGES_FOR_NOW = 100
 
 type Notification = {
   readonly id: string
@@ -122,6 +122,12 @@ async function getAllNotifications() {
       const page = values.find(v => v.key === 'page')
       if (page) {
         console.log(`You have ${page.value} pages of notifications`)
+        const pageInt = parseInt(page.value, 10)
+        if (pageInt != NaN && pageInt > MAXIMUM_PAGES_FOR_NOW) {
+          console.log(
+            `This script will only look at the first ${MAXIMUM_PAGES_FOR_NOW} pages of notifications`
+          )
+        }
       }
     }
   }
