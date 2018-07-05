@@ -1,0 +1,23 @@
+{
+  "name": "leave-me-alone",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "forget-me": "ts-node script/forget-me.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/rest": "^15.6.2",
+    "chalk": "^2.4.1",
+    "json-pretty": "^0.0.1",
+    "moment": "^2.22.1",
+    "ts-node": "^6.0.3",
+    "typescript": "^2.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^10.1.2",
+    "prettier": "^1.12.1"
+  }
+}
