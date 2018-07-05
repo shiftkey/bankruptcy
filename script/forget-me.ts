@@ -121,13 +121,16 @@ async function getAllNotifications() {
       })
       const page = values.find(v => v.key === 'page')
       if (page) {
-        console.log(`You have ${page.value} pages of notifications`)
         const pageInt = parseInt(page.value, 10)
+
         if (pageInt != NaN && pageInt > MAXIMUM_PAGES_FOR_NOW) {
-          console.log(
-            `This script will only look at the first ${MAXIMUM_PAGES_FOR_NOW} pages of notifications`
+          console.warn(
+            `You have ${pageInt} pages of notifications but this script will be limited to the first ${MAXIMUM_PAGES_FOR_NOW} pages`
           )
+        } else {
+          console.warn(`You have ${page.value} pages of notifications`)
         }
+        console.log()
       }
     }
   }
