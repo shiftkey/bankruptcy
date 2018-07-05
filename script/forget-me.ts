@@ -1,6 +1,7 @@
 import * as octokit from '@octokit/rest'
+import * as URL from 'url'
 
-const MAXIMUM_PAGES_FOR_NOW = 10
+const MAXIMUM_PAGES_FOR_NOW = 40
 
 type Notification = {
   readonly id: string
@@ -105,14 +106,28 @@ client.authenticate({ type: 'token', token })
 
 async function getAllNotifications() {
   let count = 0
-  console.log(`fetching page ${count}`)
   let response = await client.activity.getNotifications({ per_page: 100 })
   count++
   let link = { link: response.headers.link }
 
+  const lastPage = client.hasLastPage(link)
+  if (lastPage) {
+    const url = URL.parse(lastPage)
+    if (url.query) {
+      const entries = url.query.split('&')
+      const values = entries.map(entry => {
+        const values = entry.split('=')
+        return { key: values[0], value: values[1] }
+      })
+      const page = values.find(v => v.key === 'page')
+      if (page) {
+        console.log(`You have ${page.value} pages of notifications`)
+      }
+    }
+  }
+
   let { data } = response
   while (client.hasNextPage(link)) {
-    console.log(`fetching page ${count}`)
     response = await client.getNextPage(link)
     count++
     data = data.concat(response.data)
