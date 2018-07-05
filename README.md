@@ -14,6 +14,8 @@ To unsubscribe from these organizations
 $ GITHUB_ACCESS_TOKEN=[token] yarn forget-me --unsubscribe [orgs or owner/repo aliases]
 ```
 
+When configuring the personal access token ensure it has access to the `notifications` scope, otherwise the script will error.
+
 **No guarantees are provided for this tool. Use at your own risk.**
 
 ### What It's Doing
