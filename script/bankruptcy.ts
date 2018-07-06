@@ -35,7 +35,21 @@ async function wrapThrottling(
   action: (client: octokit) => Promise<octokit.AnyResponse>
 ): Promise<octokit.AnyResponse> {
   try {
-    return await action(client)
+    const result = await action(client)
+
+    const response = await client.misc.getRateLimit({})
+
+    const rateLimit: RateLimit = response.data
+
+    const { remaining } = rateLimit.rate
+
+    if (remaining % 100 === 0) {
+      console.log(
+        `- You have ${remaining} API requests available before you will be rate-limited`
+      )
+    }
+
+    return result
   } catch (err) {
     const response = await client.misc.getRateLimit({})
     const rateLimit: RateLimit = response.data
