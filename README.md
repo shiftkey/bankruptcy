@@ -39,7 +39,7 @@ This tool lets you see what notifications you have associated with a given set o
 **Searching for notifications on a specific repository**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn bankruptcy atom/atom
+$ yarn bankruptcy atom/atom
 yarn run v1.7.0
 $ ts-node script/bankruptcy.ts atom/atom
 Note: You have 684 pages of notifications but this script will be limited to the first 100 pages. This might take a while to crunch the data.
@@ -53,7 +53,7 @@ Note: You have 684 pages of notifications but this script will be limited to the
 **Searching for notifications on a specific organization**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn bankruptcy atom
+$ yarn bankruptcy atom
 yarn run v1.7.0
 $ ts-node script/bankruptcy.ts atom
 Note: You have 684 pages of notifications but this script will be limited to the first 100 pages. This might take a while to crunch the data.
@@ -73,7 +73,7 @@ Note: You have 684 pages of notifications but this script will be limited to the
 **Unsubscribing from notifications on a specific organization**
 
 ```sh
-$ GITHUB_ACCESS_TOKEN=[token] yarn bankruptcy atom --unsubscribe
+$ yarn bankruptcy atom --unsubscribe
 yarn run v1.7.0
 $ ts-node script/bankruptcy.ts atom --unsubscribe
 Note: Unsubscribing from all notification threads that match the provided organizations
