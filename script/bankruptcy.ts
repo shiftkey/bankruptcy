@@ -114,6 +114,7 @@ async function unsubscribeFrom(notification: Notification) {
       thread_id: id,
     })
   )
+
   await wrapThrottling(client, c =>
     c.activity.deleteNotificationThreadSubscription({
       id: id,
@@ -121,10 +122,11 @@ async function unsubscribeFrom(notification: Notification) {
     })
   )
 
+  const then = moment(notification.updated_at)
   console.log(
     ` - unsubscribed from notification ${notification.id} from repo ${
       notification.repository.full_name
-    }`
+    } - updated ${then.fromNow()}`
   )
 }
 
