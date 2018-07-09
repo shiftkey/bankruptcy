@@ -220,11 +220,11 @@ async function getAllNotifications() {
 
         if (pageInt != NaN && pageInt > MAXIMUM_PAGES_FOR_NOW) {
           console.warn(
-            `Note: You have ${pageInt} pages of notifications but this script will be limited to the first ${MAXIMUM_PAGES_FOR_NOW} pages. This might take a while to crunch the data.`
+            `Note: There are ${pageInt} pages of notifications available but this script will be limited to the first ${MAXIMUM_PAGES_FOR_NOW} pages. This might take a while to crunch the data.`
           )
         } else {
           console.warn(
-            `Note: You have ${
+            `Note: There are ${
               page.value
             } pages of notifications. This might take a while to crunch the data.`
           )
@@ -251,19 +251,35 @@ getAllNotifications().then(async (notifications: Array<Notification>) => {
   const notificationsByRepository = new Map<string, Set<string>>()
 
   for (const notification of notifications) {
-    const matchesRule = matches(notification)
+    if (debug) {
+      console.log(
+        ` - notification ${notification.id} from repo ${
+          notification.repository.full_name
+        } with reason: ${notification.reason}`
+      )
+      console.log(` - subject: '${notification.subject.title}'`)
+      const then = moment(notification.updated_at)
+      console.log(` - time: ${then.fromNow()}`)
+      console.log()
+    } else {
+      const matchesRule = matches(notification)
 
-    if (matchesRule) {
-      const key = notification.repository.full_name
-      const existing = notificationsByRepository.get(key)
-      if (existing) {
-        existing.add(notification.id)
-      } else {
-        const values = new Set<string>()
-        values.add(notification.id)
-        notificationsByRepository.set(key, values)
+      if (matchesRule) {
+        const key = notification.repository.full_name
+        const existing = notificationsByRepository.get(key)
+        if (existing) {
+          existing.add(notification.id)
+        } else {
+          const values = new Set<string>()
+          values.add(notification.id)
+          notificationsByRepository.set(key, values)
+        }
       }
     }
+  }
+
+  if (debug) {
+    return
   }
 
   for (const [full_name, notificationIds] of notificationsByRepository) {
