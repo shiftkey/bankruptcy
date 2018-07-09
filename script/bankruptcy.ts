@@ -93,41 +93,37 @@ if (unsubscribe) {
   console.log()
 }
 
-function logNotification(notification: Notification) {
+function logNotification(full_name: string, notificationIds: Set<string>) {
   console.log(
-    ` - notification ${notification.id} from repo ${
-      notification.repository.full_name
-    } with reason: ${notification.reason}`
+    `Found ${
+      notificationIds.size
+    } distinct notifications for repository ${full_name}`
   )
-  console.log(` - subject: '${notification.subject.title}'`)
-  const then = moment(notification.updated_at)
-  console.log(` - time: ${then.fromNow()}`)
-
-  console.log()
 }
 
-async function unsubscribeFrom(notification: Notification) {
-  const id = notification.id
-  await wrapThrottling(client, c =>
-    c.activity.markNotificationThreadAsRead({
-      id: id,
-      thread_id: id,
-    })
-  )
+async function unsubscribeFrom(
+  full_name: string,
+  notificationIds: Set<string>
+) {
+  for (const id of notificationIds) {
+    await wrapThrottling(client, c =>
+      c.activity.markNotificationThreadAsRead({
+        id: id,
+        thread_id: id,
+      })
+    )
 
-  await wrapThrottling(client, c =>
-    c.activity.deleteNotificationThreadSubscription({
-      id: id,
-      thread_id: id,
-    })
-  )
+    await wrapThrottling(client, c =>
+      c.activity.deleteNotificationThreadSubscription({
+        id: id,
+        thread_id: id,
+      })
+    )
 
-  const then = moment(notification.updated_at)
-  console.log(
-    ` - unsubscribed from notification ${notification.id} from repo ${
-      notification.repository.full_name
-    } - updated ${then.fromNow()}`
-  )
+    console.log(
+      ` - unsubscribed from notification ${id} from repo ${full_name}`
+    )
+  }
 }
 
 function matchEntry(
@@ -135,11 +131,15 @@ function matchEntry(
   alias: string
 ): boolean | undefined {
   if (alias.indexOf('/') > -1) {
-    if (alias === notification.repository.full_name) {
+    if (
+      alias.toUpperCase() === notification.repository.full_name.toUpperCase()
+    ) {
       return true
     }
   } else {
-    if (alias === notification.repository.owner.login) {
+    if (
+      alias.toUpperCase() === notification.repository.owner.login.toUpperCase()
+    ) {
       return true
     }
   }
@@ -248,15 +248,29 @@ async function getAllNotifications() {
 }
 
 getAllNotifications().then(async (notifications: Array<Notification>) => {
+  const notificationsByRepository = new Map<string, Set<string>>()
+
   for (const notification of notifications) {
     const matchesRule = matches(notification)
 
     if (matchesRule) {
-      if (unsubscribe) {
-        await unsubscribeFrom(notification)
+      const key = notification.repository.full_name
+      const existing = notificationsByRepository.get(key)
+      if (existing) {
+        existing.add(notification.id)
       } else {
-        logNotification(notification)
+        const values = new Set<string>()
+        values.add(notification.id)
+        notificationsByRepository.set(key, values)
       }
+    }
+  }
+
+  for (const [full_name, notificationIds] of notificationsByRepository) {
+    if (unsubscribe) {
+      await unsubscribeFrom(full_name, notificationIds)
+    } else {
+      logNotification(full_name, notificationIds)
     }
   }
 })
