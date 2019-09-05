@@ -4,6 +4,8 @@
   "description": "",
   "scripts": {
     "build": "tsc",
+    "prettier": "prettier -l **/*.ts",
+    "prettify": "prettier --write **/*.ts",
     "bankruptcy": "ts-node script/bankruptcy.ts"
   },
   "keywords": [],
