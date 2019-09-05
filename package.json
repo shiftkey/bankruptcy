@@ -1,5 +1,5 @@
 {
-  "name": "leave-me-alone",
+  "name": "bankruptcy",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -13,7 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "@octokit/rest": "^15.6.2",
-    "chalk": "^2.4.1",
     "json-pretty": "^0.0.1",
     "moment": "^2.22.2",
     "ts-node": "^8.3.0",
