@@ -95,9 +95,7 @@ if (unsubscribe) {
 
 function logNotification(full_name: string, notificationIds: Set<string>) {
   console.log(
-    `Found ${
-      notificationIds.size
-    } distinct notifications for repository ${full_name}`
+    `Found ${notificationIds.size} distinct notifications for repository ${full_name}`
   )
 }
 
@@ -224,9 +222,7 @@ async function getAllNotifications() {
           )
         } else {
           console.warn(
-            `Note: There are ${
-              page.value
-            } pages of notifications. This might take a while to crunch the data.`
+            `Note: There are ${page.value} pages of notifications. This might take a while to crunch the data.`
           )
         }
         console.log()
@@ -253,9 +249,7 @@ getAllNotifications().then(async (notifications: Array<Notification>) => {
   for (const notification of notifications) {
     if (debug) {
       console.log(
-        ` - notification ${notification.id} from repo ${
-          notification.repository.full_name
-        } with reason: ${notification.reason}`
+        ` - notification ${notification.id} from repo ${notification.repository.full_name} with reason: ${notification.reason}`
       )
       console.log(` - subject: '${notification.subject.title}'`)
       const then = moment(notification.updated_at)
