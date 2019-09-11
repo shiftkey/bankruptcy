@@ -19,7 +19,7 @@
     "typescript": "^3.6.2"
   },
   "devDependencies": {
-    "@types/node": "^12.7.4",
+    "@types/node": "^12.7.5",
     "prettier": "^1.12.1"
   }
 }
