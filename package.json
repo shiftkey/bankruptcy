@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@octokit/rest": "^15.6.2",
+    "@octokit/rest": "^16.32.0",
     "json-pretty": "^0.0.1",
     "moment": "^2.22.2",
     "ts-node": "^8.4.1",
