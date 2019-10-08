@@ -1,10 +1,6 @@
 import * as octokit from '@octokit/rest'
 import * as moment from 'moment'
 
-import * as URL from 'url'
-
-const MAXIMUM_PAGES_FOR_NOW = 100
-
 type RateLimit = {
   readonly rate: {
     readonly limit: number
@@ -14,7 +10,7 @@ type RateLimit = {
 }
 
 type Notification = {
-  readonly id: string
+  readonly id: number
   readonly unread: boolean
   readonly reason: string
   readonly updated_at: string
@@ -37,7 +33,7 @@ async function wrapThrottling(
   try {
     const result = await action(client)
 
-    const response = await client.misc.getRateLimit({})
+    const response = await client.rateLimit.get()
 
     const rateLimit: RateLimit = response.data
 
@@ -51,7 +47,7 @@ async function wrapThrottling(
 
     return result
   } catch (err) {
-    const response = await client.misc.getRateLimit({})
+    const response = await client.rateLimit.get()
     const rateLimit: RateLimit = response.data
 
     const { remaining, reset } = rateLimit.rate
@@ -93,7 +89,7 @@ if (unsubscribe) {
   console.log()
 }
 
-function logNotification(full_name: string, notificationIds: Set<string>) {
+function logNotification(full_name: string, notificationIds: Set<number>) {
   console.log(
     `Found ${notificationIds.size} distinct notifications for repository ${full_name}`
   )
@@ -101,19 +97,17 @@ function logNotification(full_name: string, notificationIds: Set<string>) {
 
 async function unsubscribeFrom(
   full_name: string,
-  notificationIds: Set<string>
+  notificationIds: Set<number>
 ) {
   for (const id of notificationIds) {
     await wrapThrottling(client, c =>
-      c.activity.markNotificationThreadAsRead({
-        id: id,
+      c.activity.getThreadSubscription({
         thread_id: id,
       })
     )
 
     await wrapThrottling(client, c =>
-      c.activity.deleteNotificationThreadSubscription({
-        id: id,
+      c.activity.deleteThreadSubscription({
         thread_id: id,
       })
     )
@@ -179,7 +173,7 @@ if (token == null) {
 const client = new octokit()
 client.authenticate({ type: 'token', token })
 
-client.misc.getRateLimit({}).then(response => {
+client.rateLimit.get().then(response => {
   const rateLimit: RateLimit = response.data
 
   const { remaining, reset } = rateLimit.rate
@@ -196,55 +190,15 @@ client.misc.getRateLimit({}).then(response => {
 })
 
 async function getAllNotifications() {
-  let count = 0
-  let response = await wrapThrottling(client, c =>
-    c.activity.getNotifications({ per_page: 100 })
-  )
-  count++
-  let link = { link: response.headers.link }
+  const options = client.activity.listNotifications.endpoint.merge({
+    per_page: 100,
+  })
 
-  const lastPage = client.hasLastPage(link)
-  if (lastPage) {
-    const url = URL.parse(lastPage)
-    if (url.query) {
-      const entries = url.query.split('&')
-      const values = entries.map(entry => {
-        const values = entry.split('=')
-        return { key: values[0], value: values[1] }
-      })
-      const page = values.find(v => v.key === 'page')
-      if (page) {
-        const pageInt = parseInt(page.value, 10)
-
-        if (pageInt != NaN && pageInt > MAXIMUM_PAGES_FOR_NOW) {
-          console.warn(
-            `Note: There are ${pageInt} pages of notifications available but this script will be limited to the first ${MAXIMUM_PAGES_FOR_NOW} pages. This might take a while to crunch the data.`
-          )
-        } else {
-          console.warn(
-            `Note: There are ${page.value} pages of notifications. This might take a while to crunch the data.`
-          )
-        }
-        console.log()
-      }
-    }
-  }
-
-  let { data } = response
-  while (client.hasNextPage(link)) {
-    response = await wrapThrottling(client, c => c.getNextPage(link))
-    count++
-    data = data.concat(response.data)
-
-    if (count > MAXIMUM_PAGES_FOR_NOW) {
-      return data
-    }
-  }
-  return data
+  return client.paginate(options)
 }
 
 getAllNotifications().then(async (notifications: Array<Notification>) => {
-  const notificationsByRepository = new Map<string, Set<string>>()
+  const notificationsByRepository = new Map<string, Set<number>>()
 
   for (const notification of notifications) {
     if (debug) {
@@ -264,7 +218,7 @@ getAllNotifications().then(async (notifications: Array<Notification>) => {
         if (existing) {
           existing.add(notification.id)
         } else {
-          const values = new Set<string>()
+          const values = new Set<number>()
           values.add(notification.id)
           notificationsByRepository.set(key, values)
         }
