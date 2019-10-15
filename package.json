@@ -16,7 +16,7 @@
     "json-pretty": "^0.0.1",
     "moment": "^2.22.2",
     "ts-node": "^8.4.1",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.4"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",
