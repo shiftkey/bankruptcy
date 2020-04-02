@@ -77,7 +77,7 @@ if (process.argv.length < 3) {
 const args = process.argv.splice(2)
 
 const organizationsOrRepositoryAliases = args.filter(
-  v => v.indexOf('--') === -1
+  (v) => v.indexOf('--') === -1
 )
 const debug = args.indexOf('--debug') >= 0
 const unsubscribe = args.indexOf('--unsubscribe') >= 0
@@ -100,13 +100,13 @@ async function unsubscribeFrom(
   notificationIds: Set<number>
 ) {
   for (const id of notificationIds) {
-    await wrapThrottling(client, c =>
+    await wrapThrottling(client, (c) =>
       c.activity.getThreadSubscription({
         thread_id: id,
       })
     )
 
-    await wrapThrottling(client, c =>
+    await wrapThrottling(client, (c) =>
       c.activity.deleteThreadSubscription({
         thread_id: id,
       })
@@ -173,7 +173,7 @@ if (token == null) {
 const client = new octokit()
 client.authenticate({ type: 'token', token })
 
-client.rateLimit.get().then(response => {
+client.rateLimit.get().then((response) => {
   const rateLimit: RateLimit = response.data
 
   const { remaining, reset } = rateLimit.rate
