@@ -1,4 +1,4 @@
-import * as octokit from '@octokit/rest'
+import { Octokit, OctokitResponse } from '@octokit/rest'
 import * as moment from 'moment'
 
 type RateLimit = {
@@ -27,9 +27,9 @@ type Notification = {
 }
 
 async function wrapThrottling(
-  client: octokit,
-  action: (client: octokit) => Promise<octokit.AnyResponse>
-): Promise<octokit.AnyResponse> {
+  client: Octokit,
+  action: (client: Octokit) => Promise<OctokitResponse<any>>
+): Promise<OctokitResponse<any>> {
   try {
     const result = await action(client)
 
@@ -170,7 +170,7 @@ if (token == null) {
   )
 }
 
-const client = new octokit()
+const client = new Octokit()
 client.authenticate({ type: 'token', token })
 
 client.rateLimit.get().then((response) => {
